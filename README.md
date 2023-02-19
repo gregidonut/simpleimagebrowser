@@ -1,7 +1,7 @@
 # simpleimagebrowser
 
 ## Abstract
-Literally as simple as an image browser can get
+Literally as simple as an image browser can get,
 it will ask the user which directory to look for
 images from, and will display them, in the window.
 
