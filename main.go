@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"github.com/gregidonut/simpleimagebrowser/listing"
 	"image/color"
+	"log"
+	"os"
 	"strconv"
 )
 
@@ -14,7 +18,7 @@ func main() {
 
 	w := a.NewWindow("simpleimagebrowser")
 
-	w.SetContent(makeUI())
+	w.SetContent(makeUI(listing.StartDirectory()))
 	//w.Resize(fyne.NewSize(600, 600))
 	//w.SetFixedSize(true)
 
@@ -49,15 +53,23 @@ func makeImageGrid() fyne.CanvasObject {
 	return container.NewGridWrap(cellSize, items...)
 }
 
-// makeStatus will show more information about the focused image from the makeImageGrid
-// container
-func makeStatus() fyne.CanvasObject {
-	return canvas.NewText("status", color.NRGBA{R: 0xc7, G: 0x5a, B: 0xff, A: 0xff})
+// makeStatus will show more information about the dir from the makeImageGrid container is presenting
+func makeStatus(images []fyne.URI) fyne.CanvasObject {
+	dirPath, _ := os.Getwd()
+	status := fmt.Sprintf("Directory: %s; %d items", dirPath, len(images))
+	return canvas.NewText(status, color.NRGBA{R: 0xc7, G: 0x5a, B: 0xff, A: 0xff})
 }
 
 // makeUI will be the main container that will contain everything
-func makeUI() fyne.CanvasObject {
-	status := makeStatus()
+func makeUI(dir fyne.ListableURI) fyne.CanvasObject {
+	list, err := dir.List()
+	if err != nil {
+		log.Println("Error listing directory", err)
+	}
+
+	images := listing.FilterImages(list)
+
+	status := makeStatus(images)
 	content := makeImageGrid()
 	return container.NewBorder(nil, status, nil, nil, content)
 }
