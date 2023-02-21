@@ -2,7 +2,10 @@ module github.com/gregidonut/simpleimagebrowser
 
 go 1.20
 
-require fyne.io/fyne/v2 v2.3.1
+require (
+	fyne.io/fyne/v2 v2.3.1
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+)
 
 require (
 	fyne.io/systray v1.10.1-0.20230207085535-4a244dbb9d03 // indirect
