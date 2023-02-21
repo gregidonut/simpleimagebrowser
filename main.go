@@ -42,6 +42,10 @@ func makeImageItem(u fyne.URI) fyne.CanvasObject {
 // laid out in it to simulate a thumbnail style presentation of a list of images calling
 // the makeImageItem to present the images with a fixed cell size
 func makeImageGrid(images []fyne.URI) fyne.CanvasObject {
+	// closing the loading.Loads channel will be useful to avoid deadlocks when all images in the list
+	// have been added to the channel
+	defer close(loading.Loads)
+
 	items := make([]fyne.CanvasObject, 0)
 
 	// loop through images to show as thumbnails
