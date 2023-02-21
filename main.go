@@ -7,10 +7,10 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"github.com/gregidonut/simpleimagebrowser/listing"
+	"github.com/gregidonut/simpleimagebrowser/loading"
 	"image/color"
 	"log"
 	"os"
-	"strconv"
 )
 
 func main() {
@@ -29,24 +29,23 @@ func main() {
 // then returns a border layout container where at the bottom the label is placed and the
 // image which will consume the remaining space(which in this case will be the top since
 // only the bottom of the layout is specified to be used)
-func makeImageItem(imgLabel string) fyne.CanvasObject {
-	label := canvas.NewText(imgLabel, color.NRGBA{R: 0xf7, G: 0xff, B: 0x5e, A: 0xff})
+func makeImageItem(u fyne.URI) fyne.CanvasObject {
+	label := canvas.NewText(u.Name(), color.NRGBA{R: 0xf7, G: 0xff, B: 0x5e, A: 0xff})
 	label.Alignment = fyne.TextAlignCenter
 
-	img := canvas.NewRectangle(color.NRGBA{R: 0x8b, G: 0xff, B: 0xfe, A: 0xff})
+	img := loading.LoadImage(u)
 	return container.NewBorder(nil, label, nil, nil, img)
 }
 
 // makeImageGrid creates an image grid container using the GridWrap layout with a images
 // laid out in it to simulate a thumbnail style presentation of a list of images calling
 // the makeImageItem to present the images with a fixed cell size
-func makeImageGrid() fyne.CanvasObject {
+func makeImageGrid(images []fyne.URI) fyne.CanvasObject {
 	items := make([]fyne.CanvasObject, 0)
 
 	// loop through images to show as thumbnails
-	for i := 1; i <= 10; i++ {
-		mockImageName := strconv.Itoa(i)
-		items = append(items, makeImageItem(mockImageName))
+	for _, u := range images {
+		items = append(items, makeImageItem(u))
 	}
 
 	cellSize := fyne.NewSize(160, 160)
@@ -70,6 +69,6 @@ func makeUI(dir fyne.ListableURI) fyne.CanvasObject {
 	images := listing.FilterImages(list)
 
 	status := makeStatus(images)
-	content := makeImageGrid()
+	content := makeImageGrid(images)
 	return container.NewBorder(nil, status, nil, nil, content)
 }
