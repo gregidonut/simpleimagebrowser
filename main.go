@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -91,4 +92,31 @@ func startDirectory() fyne.ListableURI {
 
 	list, _ := storage.ListerForURI(storage.NewFileURI(dir))
 	return list
+}
+
+// isImage parses the fyne.URI and returns true if the extension is in the list of supported file extensions
+func isImage(file fyne.URI) bool {
+	ext := strings.ToLower(file.Extension())
+
+	listOfImgExt := map[string]bool{
+		".png":  true,
+		".jpg":  true,
+		".jpeg": true,
+		".gif":  true,
+	}
+
+	return listOfImgExt[ext]
+}
+
+// filterImages uses isImage to generate a list of supported extensions
+func filterImages(files []fyne.URI) []fyne.URI {
+	images := make([]fyne.URI, 0)
+
+	for _, file := range files {
+		if isImage(file) {
+			images = append(images, file)
+		}
+	}
+
+	return images
 }
