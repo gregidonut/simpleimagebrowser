@@ -11,5 +11,5 @@ type bgImageLoad struct {
 	img *canvas.Image
 }
 
-// loads queues the images to be loaded
-var loads = make(chan bgImageLoad, 1024)
+// Loads queues the images to be loaded
+var Loads = make(chan bgImageLoad, 1024)

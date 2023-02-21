@@ -15,7 +15,7 @@ func LoadImage(u fyne.URI) fyne.CanvasObject {
 	img.FillMode = canvas.ImageFillContain
 
 	// adding the image to the background channel queue
-	loads <- bgImageLoad{u, img}
+	Loads <- bgImageLoad{u, img}
 	return img
 }
 
@@ -48,11 +48,11 @@ func scaleImage(img image.Image) image.Image {
 }
 
 // DoLoadImages is the function that will be called in main as a goroutine, it will
-// range through the loads channel and call the main logic function: doLoadImage on each load
+// range through the Loads channel and call the main logic function: doLoadImage on each load
 // which will redraw the image everytime the parent container is resized since doLoadImage calls
 // the Refresh() method from the *canvas.Image struct
 func DoLoadImages() {
-	for load := range loads {
+	for load := range Loads {
 		doLoadImage(load.uri, load.img)
 	}
 }
