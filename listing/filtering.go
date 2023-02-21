@@ -44,7 +44,7 @@ func isImage(file fyne.URI) bool {
 		".png":  true,
 		".jpg":  true,
 		".jpeg": true,
-		".gif":  true,
+		//".gif":  true,
 	}
 
 	return listOfImgExt[ext]
