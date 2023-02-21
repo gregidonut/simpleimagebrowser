@@ -14,7 +14,7 @@ func main() {
 
 	w := a.NewWindow("simpleimagebrowser")
 
-	w.SetContent(makeImageGrid())
+	w.SetContent(makeUI())
 	//w.Resize(fyne.NewSize(600, 600))
 	//w.SetFixedSize(true)
 
@@ -47,4 +47,17 @@ func makeImageGrid() fyne.CanvasObject {
 
 	cellSize := fyne.NewSize(160, 160)
 	return container.NewGridWrap(cellSize, items...)
+}
+
+// makeStatus will show more information about the focused image from the makeImageGrid
+// container
+func makeStatus() fyne.CanvasObject {
+	return canvas.NewText("status", color.NRGBA{R: 0xc7, G: 0x5a, B: 0xff, A: 0xff})
+}
+
+// makeUI will be the main container that will contain everything
+func makeUI() fyne.CanvasObject {
+	status := makeStatus()
+	content := makeImageGrid()
+	return container.NewBorder(nil, status, nil, nil, content)
 }
