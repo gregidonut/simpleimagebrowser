@@ -1,11 +1,17 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/storage"
 	"image/color"
+	"log"
+	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -60,4 +66,29 @@ func makeUI() fyne.CanvasObject {
 	status := makeStatus()
 	content := makeImageGrid()
 	return container.NewBorder(nil, status, nil, nil, content)
+}
+
+// startDirectory will parse commandline args and see if it can use
+// the argument as a fyne.ListableURI or use the current working directory
+// if not
+func startDirectory() fyne.ListableURI {
+	flag.Parse()
+	if len(flag.Args()) < 1 {
+		cwd, _ := os.Getwd()
+		list, _ := storage.ListerForURI(storage.NewFileURI(cwd))
+		fmt.Printf("%#v\n", list)
+		return list
+	}
+
+	dir, err := filepath.Abs(flag.Arg(0))
+	if err != nil {
+		cwd, _ := os.Getwd()
+		log.Printf("Could not find directory: %q\nOpening: %q instead", dir, cwd)
+		list, _ := storage.ListerForURI(storage.NewFileURI(cwd))
+		fmt.Printf("%#v\n", list)
+		return list
+	}
+
+	list, _ := storage.ListerForURI(storage.NewFileURI(dir))
+	return list
 }
