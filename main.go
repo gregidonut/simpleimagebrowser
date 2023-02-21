@@ -22,6 +22,7 @@ func main() {
 	//w.Resize(fyne.NewSize(600, 600))
 	//w.SetFixedSize(true)
 
+	go loading.DoLoadImages()
 	w.ShowAndRun()
 }
 
