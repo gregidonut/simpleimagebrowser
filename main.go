@@ -11,6 +11,7 @@ import (
 	"image/color"
 	"log"
 	"os"
+	"runtime"
 )
 
 func main() {
@@ -22,7 +23,11 @@ func main() {
 	//w.Resize(fyne.NewSize(600, 600))
 	//w.SetFixedSize(true)
 
-	go loading.DoLoadImages()
+	var workers int // sanity checking to make sure workers is an int(1000% not necessary)
+	workers = runtime.NumCPU() / 2
+	for i := 0; i < workers; i++ {
+		go loading.DoLoadImages()
+	}
 	w.ShowAndRun()
 }
 
