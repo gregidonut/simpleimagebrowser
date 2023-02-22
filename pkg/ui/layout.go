@@ -40,7 +40,10 @@ func makeImageGrid(images []fyne.URI) fyne.CanvasObject {
 	}
 
 	cellSize := fyne.NewSize(160, 160)
-	return container.NewGridWrap(cellSize, items...)
+
+	// wrap teh container in a scrolling parent (as an expected feature in any browser)
+	imageGrid := container.NewGridWrap(cellSize, items...)
+	return container.NewVScroll(imageGrid)
 }
 
 // makeStatus will show more information about the dir from the makeImageGrid container is presenting
