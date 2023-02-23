@@ -10,12 +10,12 @@ import (
 )
 
 // LoadImage will add the img and to the background channel queue
-func LoadImage(u fyne.URI) fyne.CanvasObject {
+func LoadImage(u fyne.URI, jobs chan<- BgImageLoad) fyne.CanvasObject {
 	img := canvas.NewImageFromResource(nil)
 	img.FillMode = canvas.ImageFillContain
 
 	// adding the image to the background channel queue
-	Loads <- BgImageLoad{u, img}
+	jobs <- BgImageLoad{u, img}
 	return img
 }
 
@@ -51,8 +51,8 @@ func scaleImage(img image.Image) image.Image {
 // range through the Loads channel and call the main logic function: doLoadImage on each load
 // which will redraw the image everytime the parent container is resized since doLoadImage calls
 // the Refresh() method from the *canvas.Image struct
-func DoLoadImages() {
-	for load := range Loads {
-		doLoadImage(load.uri, load.img)
+func DoLoadImages(jobs <-chan BgImageLoad) {
+	for job := range jobs {
+		doLoadImage(job.uri, job.img)
 	}
 }

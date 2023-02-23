@@ -10,6 +10,3 @@ type BgImageLoad struct {
 	uri fyne.URI
 	img *canvas.Image
 }
-
-// Loads queues the images to be loaded
-var Loads = make(chan BgImageLoad, 1024)
