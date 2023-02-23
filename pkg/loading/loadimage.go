@@ -15,7 +15,7 @@ func LoadImage(u fyne.URI) fyne.CanvasObject {
 	img.FillMode = canvas.ImageFillContain
 
 	// adding the image to the background channel queue
-	Loads <- bgImageLoad{u, img}
+	Loads <- BgImageLoad{u, img}
 	return img
 }
 
