@@ -35,7 +35,7 @@ func makeImageGrid(images []fyne.URI) fyne.CanvasObject {
 	var workers int // sanity checking to make sure workers is an int(1000% not necessary)
 	workers = runtime.NumCPU() / 2
 
-	jobs := make(chan loading.BgImageLoad, 1024)
+	jobs := make(chan loading.BgImageLoad, len(images))
 	defer close(jobs)
 
 	for i := 0; i < workers; i++ {
