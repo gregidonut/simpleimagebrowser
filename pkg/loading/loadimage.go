@@ -21,22 +21,24 @@ func LoadImage(u fyne.URI, jobs chan<- BgImageLoad) fyne.CanvasObject {
 
 // doLoadImage is responsible for reading the image file from the fyne.URI and returning
 // the in-memory image to the calling container/CanvasObject
-func doLoadImage(u fyne.URI, img *canvas.Image) {
+func doLoadImage(u fyne.URI, img *canvas.Image) LoadedImage {
 	read, err := storage.Reader(u)
 	if err != nil {
 		log.Println("Error opening image", err)
-		return
+		return LoadedImage{}
 	}
 	defer read.Close()
 
 	raw, _, err := image.Decode(read)
 	if err != nil {
 		log.Println("Error decoding image", err)
-		return
+		return LoadedImage{}
 	}
 
-	img.Image = scaleImage(raw)
-	img.Refresh()
+	//img.Image = scaleImage(raw)
+	//img.Refresh()
+	return LoadedImage{scaleImage(raw), img}
+
 }
 
 // scaleImage is essentially a wrapper for the resize.Thumbnail function but specifically
@@ -51,8 +53,15 @@ func scaleImage(img image.Image) image.Image {
 // range through the Loads channel and call the main logic function: doLoadImage on each load
 // which will redraw the image everytime the parent container is resized since doLoadImage calls
 // the Refresh() method from the *canvas.Image struct
-func DoLoadImages(jobs <-chan BgImageLoad) {
+func DoLoadImages(jobs <-chan BgImageLoad, results chan<- LoadedImage) {
 	for job := range jobs {
-		doLoadImage(job.uri, job.img)
+		results <- doLoadImage(job.uri, job.img)
+	}
+}
+
+func RefreshImages(results <-chan LoadedImage) {
+	for res := range results {
+		res.img.Image = res.decoded
+		res.img.Refresh()
 	}
 }

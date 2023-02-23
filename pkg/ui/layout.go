@@ -35,11 +35,13 @@ func makeImageGrid(images []fyne.URI) fyne.CanvasObject {
 	var workers int // sanity checking to make sure workers is an int(1000% not necessary)
 	workers = runtime.NumCPU() / 2
 
+	results := make(chan loading.LoadedImage, workers)
 	jobs := make(chan loading.BgImageLoad, len(images))
 	defer close(jobs)
 
 	for i := 0; i < workers; i++ {
-		go loading.DoLoadImages(jobs)
+		go loading.DoLoadImages(jobs, results)
+		go loading.RefreshImages(results)
 	}
 
 	// loop through blank images to show as thumb thumbnails while waiting for background
