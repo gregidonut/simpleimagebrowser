@@ -33,11 +33,14 @@ func makeImageGrid(images []fyne.URI) fyne.CanvasObject {
 
 	// {{ worker-pools pattern
 	var workers int // sanity checking to make sure workers is an int(1000% not necessary)
-	workers = runtime.NumCPU() / 2
+	workers = int(float32(runtime.NumCPU()) * 0.25)
 
 	results := make(chan loading.LoadedImage, workers)
-	jobs := make(chan loading.BgImageLoad, len(images))
-	defer close(jobs)
+	jobs := make(chan loading.BgImageLoad, workers)
+
+	// unable to close jobs because it requires a new concurrency pattern: the for select
+	// with the done channel
+	//defer close(jobs)
 
 	for i := 0; i < workers; i++ {
 		go loading.DoLoadImages(jobs, results)

@@ -15,7 +15,9 @@ func LoadImage(u fyne.URI, jobs chan<- BgImageLoad) fyne.CanvasObject {
 	img.FillMode = canvas.ImageFillContain
 
 	// adding the image to the background channel queue
-	jobs <- BgImageLoad{u, img}
+	go func() {
+		jobs <- BgImageLoad{u, img}
+	}()
 	return img
 }
 
